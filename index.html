@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>School Tracker</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280;
+      --border:rgba(17,24,39,.10); --shadow:0 8px 26px rgba(17,24,39,.08);
+      --accent:#2AABEE; --accentText:#fff;
+      --danger:#ef4444; --success:#16a34a; --warn:#f59e0b;
+      --radius:16px; --gap:12px;
+      --navH: 64px;
+
+      --ok:#16a34a; --bad:#ef4444;
+    }
+
+    body.tg{
+      --bg:var(--tg-theme-bg-color, var(--bg));
+      --text:var(--tg-theme-text-color, var(--text));
+      --card:var(--tg-theme-secondary-bg-color, var(--card));
+      --accent:var(--tg-theme-button-color, var(--accent));
+      --accentText:var(--tg-theme-button-text-color, var(--accentText));
+      --border:color-mix(in srgb, var(--text) 12%, transparent);
+      --muted:color-mix(in srgb, var(--text) 55%, transparent);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .wrap{
+      max-width:520px; margin:0 auto;
+      padding:14px 14px calc(var(--navH) + 18px + env(safe-area-inset-bottom));
+    }
+
+    .topbar{
+      position:sticky; top:0; z-index:5;
+      padding:10px 0;
+      background:linear-gradient(to bottom, var(--bg) 75%, transparent);
+      backdrop-filter:blur(6px);
+    }
+
+    .title{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px; border-radius:var(--radius);
+      background:color-mix(in srgb, var(--card) 75%, transparent);
+      border:1px solid var(--border);
+    }
+    .title h1{margin:0;font-size:16px;font-weight:900;letter-spacing:.2px}
+    .pill{
+      font-size:12px;color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px;border-radius:999px;
+      background:color-mix(in srgb, var(--card) 90%, transparent);
+      white-space:nowrap;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;
+      margin-top:var(--gap);
+    }
+
+    .muted{color:var(--muted);font-size:12px;line-height:1.35}
+
+    /* Tabs */
+    .tab{display:none}
+    .tab.active{display:block}
+
+    /* Bottom nav */
+    .bottomNav{
+      position:fixed; left:0; right:0; bottom:0; z-index:10;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background:color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter:blur(10px);
+      border-top:1px solid var(--border);
+    }
+    .navInner{
+      max-width:520px;margin:0 auto;
+      display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+    }
+    .navBtn{
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 8px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:4px;
+      line-height:1.1;
+    }
+    .navBtn.active{
+      border-color:color-mix(in srgb, var(--accent) 45%, var(--border));
+      box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+    .navIcon{font-size:18px}
+
+    /* ===== Welcome (Главная) ===== */
+    .wTitle{
+      display:flex;align-items:center;justify-content:center;
+      font-weight:1000;font-size:18px;
+      padding:12px;border-radius:16px;
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+    }
+    .wGrid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .wTile{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      user-select:none;
+    }
+    .wTile:active{transform:scale(.99)}
+    .wTileLeft{display:grid;gap:4px}
+    .wTileTop{font-weight:1000;font-size:15px}
+    .wTileSub{font-size:12px;color:var(--muted)}
+    .wTileIcon{font-size:22px}
+
+    /* ===== Schedule styles (из твоего кода) ===== */
+    .sTitleCenter{
+      display:flex; align-items:center; justify-content:center;
+      padding:10px 12px; border-radius:var(--radius);
+      background:color-mix(in srgb, var(--card) 75%, transparent);
+      border:1px solid var(--border);
+      font-weight:900; font-size:16px; letter-spacing:.2px;
+    }
+
+    .swipeZone{ touch-action: pan-y; }
+
+    .timeBlock{
+      padding:12px; border-radius:14px; border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .timeLeft{display:grid; gap:2px;}
+    .timeLabel{font-weight:1000; font-size:14px;}
+    .timeSub{font-size:12px;color:var(--muted);}
+    .timeRight{
+      font-weight:1000; font-size:18px;
+      padding:8px 10px; border-radius:12px; border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      white-space:nowrap;
+    }
+    .pillOk{color:var(--ok)}
+    .pillWarn{color:var(--warn)}
+    .timeBig{font-weight:1000;font-size:18px;line-height:1.1}
+
+    .dayHeader{
+      display:grid;
+      grid-template-columns:44px 1fr 44px;
+      align-items:center;
+      gap:10px;
+    }
+    .dayBtn{
+      width:44px;height:44px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      cursor:pointer;
+      font-size:18px;
+      font-weight:900;
+      color:var(--text);
+    }
+    .dayTitle{
+      text-align:center;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+    }
+    .dayTitle .big{font-weight:900;font-size:15px}
+    .dayTitle .small{margin-top:2px}
+
+    .lessonList{display:grid; gap:8px; margin-top:12px;}
+    .lessonItem{
+      display:grid;
+      grid-template-columns:28px 1fr auto;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      font-size:14px;
+    }
+    .lessonNum{font-weight:900;color:var(--muted)}
+    .lessonName{font-weight:900;text-align:left}
+    .lessonTime{font-weight:900;color:var(--muted);white-space:nowrap;font-size:12px;}
+
+    .bigMsg{
+      margin-top:12px;
+      padding:18px 14px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card) 92%, transparent);
+      text-align:center;
+      font-weight:1000;
+      font-size:20px;
+      line-height:1.15;
+    }
+
+    /* ===== Grades Stats styles (namespaced) ===== */
+    .gTitle{
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:16px;
+      padding:10px 12px;border-radius:var(--radius);
+      background:color-mix(in srgb, var(--card) 75%, transparent);
+      border:1px solid var(--border);
+      margin-bottom: var(--gap);
+    }
+    .gTabsRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .gTabBtn{
+      border:1px solid rgba(17,24,39,.14);
+      background:#f3f4f6;
+      color:#111827;
+      border-radius:16px;
+      padding:12px 10px;
+      font-weight:1000;
+      cursor:pointer;
+      text-align:center;
+    }
+    .gTabBtn.active{
+      border-color:rgba(42,171,238,.65);
+      box-shadow:0 0 0 4px rgba(42,171,238,.18);
+      background:#ffffff;
+    }
+    .gBtnMain{
+      width:100%;
+      border:0;
+      border-radius:16px;
+      padding:12px 10px;
+      font-weight:1000;
+      cursor:pointer;
+      background:var(--accent);
+      color:var(--accentText);
+      margin-top:12px;
+      font-size:15px;
+    }
+    .gHeaderRow{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+    }
+    .gSubjectsCount{font-weight:900;font-size:14px;}
+    .gAvgHeader{font-weight:900;font-size:14px;text-align:right;justify-self:end;}
+    .gAvgBig{font-weight:1000;font-size:34px;line-height:1;text-align:right;}
+    .gEmptyHint{
+      margin-top:12px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid rgba(17,24,39,.12);
+      background:#f9fafb;
+      font-weight:900;
+    }
+    .gSubjectCard{
+      border:1px solid rgba(17,24,39,.12);
+      border-radius:18px;
+      padding:14px;
+      background:#ffffff;
+      box-shadow:0 10px 30px rgba(17,24,39,.06);
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      margin-top:10px;
+    }
+    .gSubLeft{display:grid; gap:6px;}
+    .gSubTitleRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .gSubName{font-weight:1000;font-size:18px;}
+    .gSubBadge{
+      font-weight:1000;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(17,24,39,.14);
+      background:#f9fafb;
+      white-space:nowrap;
+    }
+    .gBadgeOk{color:var(--ok)}
+    .gBadgeWarn{color:var(--warn)}
+    .gBadgeBad{color:var(--bad)}
+    .gSubLine{color:var(--muted); font-size:13px; line-height:1.25;}
+    .gSubRight{
+      font-weight:1000;
+      font-size:38px;
+      line-height:1;
+      min-width:86px;
+      text-align:right;
+    }
+
+    .gModalOverlay{
+      position:fixed; inset:0; z-index:99990;
+      display:none;
+    }
+    .gModalOverlay::before{
+      content:"";
+      position:absolute; inset:0;
+      background:rgba(0,0,0,.55);
+    }
+    .gModalOverlay.show{ display:block; }
+
+    .gModal{
+      position:absolute;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      width:min(520px, calc(100% - 24px));
+      max-height:85vh;
+      background:#ffffff;
+      color:#111827;
+      border:1px solid rgba(17,24,39,.16);
+      border-radius:18px;
+      box-shadow:0 22px 70px rgba(0,0,0,.35);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      z-index:99991;
+    }
+    .gModalHead{
+      padding:12px;
+      background:#f3f4f6;
+      border-bottom:1px solid rgba(17,24,39,.12);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .gModalTitle{font-weight:1000;font-size:16px;}
+    .gXBtn{
+      width:40px;height:40px;
+      border-radius:14px;
+      border:1px solid rgba(17,24,39,.12);
+      background:#ffffff;
+      cursor:pointer;
+      font-weight:1000;
+      color:#111827;
+    }
+    .gModalBody{
+      padding:12px;
+      overflow:auto;
+      background:#ffffff;
+    }
+    .gSmallNote{margin-top:10px;color:#6b7280;font-size:12px;font-weight:900;}
+    .gListBtn{
+      width:100%;
+      text-align:left;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(17,24,39,.14);
+      background:#f9fafb;
+      cursor:pointer;
+      font-weight:1000;
+      margin-top:10px;
+      color:#111827;
+    }
+    .gDivider{height:1px;background:rgba(17,24,39,.12);margin:12px 0;}
+    .gField{
+      border:1px solid rgba(17,24,39,.16);
+      border-radius:14px;
+      padding:12px;
+      background:#ffffff;
+      margin-top:10px;
+    }
+    .gField input, .gField textarea{
+      width:100%;
+      border:0;
+      outline:none;
+      background:transparent;
+      color:#111827;
+      font-size:15px;
+      font-weight:900;
+      padding:0;
+      margin:0;
+    }
+    .gField textarea{resize:vertical; min-height:58px;}
+    .gField input::placeholder, .gField textarea::placeholder{
+      color:#6b7280;
+      font-weight:900;
+    }
+    .gField:focus-within{
+      border-color:rgba(42,171,238,.70);
+      box-shadow:0 0 0 4px rgba(42,171,238,.18);
+    }
+    .gHidden{display:none !important;}
+    .gBackBtn{
+      width:100%;
+      margin-top:10px;
+      border-radius:14px;
+      border:1px solid rgba(17,24,39,.14);
+      background:#ffffff;
+      color:#111827;
+      padding:10px 12px;
+      font-weight:1000;
+      cursor:pointer;
+      text-align:center;
+    }
+    .gModalActions{
+      padding:12px;
+      border-top:1px solid rgba(17,24,39,.12);
+      background:#f3f4f6;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .gBtn2{
+      border:1px solid rgba(17,24,39,.14);
+      background:#ffffff;
+      color:#111827;
+      border-radius:14px;
+      padding:12px 10px;
+      font-weight:1000;
+      cursor:pointer;
+      text-align:center;
+    }
+    .gBtn2.primary{border:0;background:var(--accent);color:var(--accentText);}
+    .gBtn2.danger{border:0;background:var(--bad);color:#fff;}
+  </style>
+</head>
+
+<body class="tg">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <h1>📚 School Tracker</h1>
+        <div id="userPill" class="pill">…</div>
+      </div>
+    </div>
+
+    <!-- TAB: Schedule -->
+    <div id="tabSchedule" class="tab active">
+      <div class="sTitleCenter">Расписание 11 В</div>
+
+      <div class="card swipeZone" id="countdownCard">
+        <div class="timeBlock">
+          <div class="timeLeft">
+            <div id="timeLabel" class="timeLabel">—</div>
+            <div id="timeSub" class="timeSub">—</div>
+          </div>
+          <div id="timeRight" class="timeRight">—</div>
+        </div>
+      </div>
+
+      <div class="card swipeZone" id="scheduleCard">
+        <div class="dayHeader">
+          <button class="dayBtn" onclick="prevDay()" aria-label="Предыдущий день">◀</button>
+
+          <div class="dayTitle">
+            <div id="dayName" class="big">—</div>
+            <div id="dayMeta" class="muted small">—</div>
+          </div>
+
+          <button class="dayBtn" onclick="nextDay()" aria-label="Следующий день">▶</button>
+        </div>
+
+        <div id="dayLessons" class="lessonList"></div>
+        <div id="weekendMsg" class="bigMsg" style="display:none;">Седня выходной, зачилься 😎</div>
+      </div>
+    </div>
+
+    <!-- TAB: Summary (теперь это Главная/приветственная) -->
+    <div id="tabSummary" class="tab">
+      <div class="wTitle">Привет 👋</div>
+
+      <div class="card">
+        <div style="font-weight:1000;font-size:16px;">Добро пожаловать в School Tracker</div>
+        <div class="muted" style="margin-top:6px;">
+          Тут будет твоя сводка и быстрые штуки. Пока — быстрые переходы:
+        </div>
+
+        <div class="wGrid">
+          <div class="wTile" onclick="openTab('Schedule')">
+            <div class="wTileLeft">
+              <div class="wTileTop">Расписание</div>
+              <div class="wTileSub">День недели · уроки · отсчёт</div>
+            </div>
+            <div class="wTileIcon">📅</div>
+          </div>
+
+          <div class="wTile" onclick="openTab('Stats')">
+            <div class="wTileLeft">
+              <div class="wTileTop">Статистика</div>
+              <div class="wTileSub">Оценки · средний балл · аттестация</div>
+            </div>
+            <div class="wTileIcon">📊</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Stats (оценки/аттестация) -->
+    <div id="tabStats" class="tab">
+      <div class="gTitle">Статистика</div>
+
+      <div class="card">
+        <div class="gTabsRow">
+          <button id="gTabAvg" class="gTabBtn active" onclick="gSetTab('avg')">Средний балл</button>
+          <button id="gTabAtt" class="gTabBtn" onclick="gSetTab('att')">Аттестация</button>
+        </div>
+
+        <button class="gBtnMain" onclick="gOpenEdit()"> Изменить данные</button>
+
+        <div class="gHeaderRow">
+          <div id="gSubjectsCount" class="gSubjectsCount">Предметов: 0</div>
+          <div style="display:grid; justify-items:end; gap:4px;">
+            <div id="gRightHeader" class="gAvgHeader">Средний балл</div>
+            <div id="gOverallBig" class="gAvgBig">—</div>
+          </div>
+        </div>
+
+        <div id="gList"></div>
+        <div id="gEmptyHint" class="gEmptyHint gHidden">Добавь предмет через «Изменить данные» 👆</div>
+      </div>
+
+      <div id="gEditOverlay" class="gModalOverlay" onclick="gOverlayClose(event)">
+        <div class="gModal" role="dialog" aria-modal="true">
+          <div class="gModalHead">
+            <div class="gModalTitle"> Изменить данные</div>
+            <button class="gXBtn" onclick="gCloseModal()" aria-label="Закрыть">×</button>
+          </div>
+
+          <div class="gModalBody">
+            <div class="gSmallNote">Данные сохраняются на устройстве.</div>
+
+            <div id="gPickerScreen">
+              <button id="gNewBtn" class="gListBtn" onclick="gToggleNewSubject()">➕ Новый предмет</button>
+
+              <div id="gNewField" class="gField gHidden">
+                <input id="gNewName" placeholder="Название предмета" />
+              </div>
+
+              <div class="gDivider"></div>
+              <div id="gSubjectsList"></div>
+            </div>
+
+            <div id="gEditorScreen" class="gHidden">
+              <button class="gBackBtn" onclick="gBackToList()">← К списку предметов</button>
+
+              <div id="gEditNameTitle" class="gListBtn" style="cursor:default;background:#fff;margin-top:10px;">
+                —
+              </div>
+
+              <div id="gFormAvg">
+                <div id="gNeedGradesWrap" class="gField gHidden">
+                  <input id="gNeedGrades" type="number" min="1" inputmode="numeric"
+                         placeholder="Оценок для аттестации (только при создании)" />
+                </div>
+
+                <div id="gAttLessonsWrap" class="gField gHidden">
+                  <input id="gAttLessons" type="number" min="0" inputmode="numeric"
+                         placeholder="Посещено уроков (только при создании)" />
+                </div>
+
+                <div class="gField">
+                  <textarea id="gGradesInput" placeholder="Оценки (через пробел или запятую), напр: 5 4 5 3"></textarea>
+                </div>
+              </div>
+
+              <div id="gFormAtt" class="gHidden">
+                <div class="gField">
+                  <input id="gMissedInput" type="number" min="0" inputmode="numeric" placeholder="Пропуски" />
+                </div>
+              </div>
+
+              <div class="gModalActions" style="margin-top:12px;">
+                <button class="gBtn2 danger" onclick="gDeleteCurrent()">Удалить</button>
+                <button class="gBtn2 primary" onclick="gSaveCurrent()">Сохранить</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom menu -->
+  <div class="bottomNav">
+    <div class="navInner">
+      <button id="btnSchedule" class="navBtn active" onclick="openTab('Schedule')">
+        <div class="navIcon">📅</div>
+        <div>Расписание</div>
+      </button>
+
+      <button id="btnSummary" class="navBtn" onclick="openTab('Summary')">
+        <div class="navIcon">🏠</div>
+        <div>Главная</div>
+      </button>
+
+      <button id="btnStats" class="navBtn" onclick="openTab('Stats')">
+        <div class="navIcon">📊</div>
+        <div>Статистика</div>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ===== Telegram =====
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.expand(); tg.MainButton?.hide(); }
+
+    const user = tg?.initDataUnsafe?.user;
+    const userPill = document.getElementById("userPill");
+    userPill.textContent = user
+      ? `${user.first_name || "User"} · ID ${user.id}`
+      : "Открой через кнопку бота";
+
+    function openTab(name) {
+      ["Schedule","Summary","Stats"].forEach(t => {
+        document.getElementById("tab"+t).classList.toggle("active", t===name);
+        document.getElementById("btn"+t).classList.toggle("active", t===name);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    // =========================
+    // SCHEDULE (из «общего кода», внутри вкладки)
+    // =========================
+    const schedule = [
+      { day: "Понедельник", lessons: ["Разговоры о важном", "Английский", "Русский", "Литература", "Физика", "История", "Вероятность и статистика"] },
+      { day: "Вторник",     lessons: ["Алгебра","Алгебра","Химия","Литература","Литература","Обществознание","Физ-ра"]},
+      { day: "Среда",       lessons: ["Информатика","Алгебра","Геометрия","Физика","Английский","География","ОБЗР"] },
+      { day: "Четверг",     lessons: ["История","Обществознание","Русский","Биология","Геометрия","Геометрия","Информатика"] },
+      { day: "Пятница",     lessons: ["Алгебра","Информатика","Информатика","Физ-ра","Физика","Английский"] },
+    ];
+
+    const bells = [
+      "09:00–09:45",
+      "09:55–10:40",
+      "11:00–11:45",
+      "12:05–12:50",
+      "13:10–13:55",
+      "14:05–14:50",
+      "15:00–15:45",
+    ];
+
+    let dayPointer = 0;
+
+    function getTodayPointer() {
+      const d = new Date().getDay(); // 0=Вс..6=Сб
+      if (d === 0) return 6;
+      if (d === 6) return 5;
+      return d - 1;
+    }
+    function pointerToLabel(p) {
+      if (p <= 4) return `${schedule[p].day}`;
+      if (p === 5) return "Суббота";
+      return "Воскресенье";
+    }
+    function parseHM(hm, baseDate) {
+      const [H,M] = hm.split(":").map(Number);
+      const d = new Date(baseDate);
+      d.setHours(H, M, 0, 0);
+      return d;
+    }
+    function formatMMSS(ms) {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      const mm = String(Math.floor(s / 60)).padStart(2,"0");
+      const ss = String(s % 60).padStart(2,"0");
+      return `${mm}:${ss}`;
+    }
+    function getWindowsForDate(dateObj, lessonsCount) {
+      const base = new Date(dateObj);
+      const n = Math.min(lessonsCount, bells.length);
+      const windows = [];
+      for (let i = 0; i < n; i++) {
+        const [a,b] = bells[i].split("–");
+        windows.push({ idx:i, start: parseHM(a, base), end: parseHM(b, base) });
+      }
+      return windows;
+    }
+
+    function renderScheduleDay() {
+      const dayNameEl = document.getElementById("dayName");
+      const dayMetaEl = document.getElementById("dayMeta");
+      const list = document.getElementById("dayLessons");
+      const weekendMsg = document.getElementById("weekendMsg");
+
+      dayNameEl.textContent = pointerToLabel(dayPointer);
+
+      if (dayPointer > 4) {
+        dayMetaEl.textContent = "";
+        list.innerHTML = "";
+        list.style.display = "none";
+        weekendMsg.style.display = "block";
+        return;
+      }
+
+      const d = schedule[dayPointer];
+      dayMetaEl.textContent = `Уроков: ${d.lessons.length}`;
+
+      weekendMsg.style.display = "none";
+      list.style.display = "grid";
+
+      list.innerHTML = d.lessons.map((x,i)=>`
+        <div class="lessonItem">
+          <div class="lessonNum">${i+1}</div>
+          <div class="lessonName">${escapeHtml(x)}</div>
+          <div class="lessonTime">${bells[i] || ""}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderCountdownToday() {
+      const labelEl = document.getElementById("timeLabel");
+      const subEl = document.getElementById("timeSub");
+      const rightEl = document.getElementById("timeRight");
+
+      const now = new Date();
+      const todayPtr = getTodayPointer();
+
+      if (todayPtr > 4) {
+        labelEl.textContent = "😎 Сегодня выходной";
+        subEl.textContent = "Седня выходной, зачилься";
+        rightEl.textContent = "—";
+        rightEl.className = "timeRight";
+        return;
+      }
+
+      const lessonsCount = schedule[todayPtr].lessons.length;
+      const windows = getWindowsForDate(now, lessonsCount);
+      const firstStart = windows[0].start;
+      const lastEnd = windows[windows.length - 1].end;
+
+      if (now < firstStart) {
+        const ms = firstStart - now;
+
+        if (ms >= 60 * 60 * 1000) {
+          labelEl.textContent = "⏰ Уроки начнутся в";
+          subEl.textContent = "До старта ещё больше часа";
+          rightEl.textContent = bells[0].split("–")[0];
+          rightEl.className = "timeRight";
+          return;
+        }
+
+        labelEl.textContent = "⏳ До урока";
+        subEl.textContent = `Урок 1 начнётся в ${bells[0].split("–")[0]}`;
+        rightEl.textContent = formatMMSS(ms);
+        rightEl.className = "timeRight pillOk";
+        return;
+      }
+
+      if (now >= lastEnd) {
+        labelEl.innerHTML = `<span class="timeBig">✅ На сегодня уроки закончились</span>`;
+        subEl.textContent = `Последний урок закончился в ${bells[windows.length - 1].split("–")[1]}`;
+        rightEl.textContent = "—";
+        rightEl.className = "timeRight";
+        return;
+      }
+
+      for (let i = 0; i < windows.length; i++) {
+        const cur = windows[i];
+
+        if (now >= cur.start && now < cur.end) {
+          labelEl.textContent = "📚 До перемены";
+          subEl.textContent = `Сейчас урок ${i+1} (${bells[i]})`;
+          rightEl.textContent = formatMMSS(cur.end - now);
+          rightEl.className = "timeRight pillOk";
+          return;
+        }
+
+        const next = windows[i+1];
+        if (next && now >= cur.end && now < next.start) {
+          labelEl.textContent = "☕ До урока";
+          subEl.textContent = `Перемена • урок ${i+2} в ${bells[i+1].split("–")[0]}`;
+          rightEl.textContent = formatMMSS(next.start - now);
+          rightEl.className = "timeRight pillWarn";
+          return;
+        }
+      }
+    }
+
+    function prevDay() {
+      dayPointer = (dayPointer - 1 + 7) % 7;
+      renderScheduleDay();
+    }
+    function nextDay() {
+      dayPointer = (dayPointer + 1) % 7;
+      renderScheduleDay();
+    }
+
+    function attachSwipe(el) {
+      let startX = 0, startY = 0;
+      let tracking = false;
+      let locked = null;
+      let lastDX = 0;
+
+      const TOUCH_SWIPE_PX = 120;
+      const TRACKPAD_TH = 320;
+      const TRACKPAD_COOLDOWN = 600;
+      const MOUSE_SWIPE_PX = 180;
+
+      el.addEventListener("touchstart", (e) => {
+        const t = e.touches?.[0];
+        if (!t) return;
+        startX = t.clientX;
+        startY = t.clientY;
+        tracking = true;
+        locked = null;
+        lastDX = 0;
+      }, {passive:true});
+
+      el.addEventListener("touchmove", (e) => {
+        if (!tracking) return;
+        const t = e.touches?.[0];
+        if (!t) return;
+
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        lastDX = dx;
+
+        if (!locked) {
+          if (Math.abs(dx) > 14 || Math.abs(dy) > 14) {
+            locked = (Math.abs(dx) > Math.abs(dy)) ? "h" : "v";
+          } else {
+            return;
+          }
+        }
+
+        if (locked === "h") e.preventDefault();
+      }, {passive:false});
+
+      el.addEventListener("touchend", () => {
+        if (!tracking) return;
+        tracking = false;
+
+        if (locked === "h") {
+          if (Math.abs(lastDX) >= TOUCH_SWIPE_PX) {
+            if (lastDX > 0) prevDay(); else nextDay();
+          }
+        }
+      }, {passive:true});
+
+      // mouse drag
+      let dragging = false;
+      let mx0 = 0;
+      el.addEventListener("mousedown", (e) => { dragging = true; mx0 = e.clientX; });
+      window.addEventListener("mouseup", (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const dx = e.clientX - mx0;
+        if (Math.abs(dx) < MOUSE_SWIPE_PX) return;
+        if (dx > 0) prevDay(); else nextDay();
+      });
+
+      // trackpad wheel
+      let accX = 0;
+      let lastT = 0;
+      let lastTrigger = 0;
+
+      el.addEventListener("wheel", (e) => {
+        if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+        e.preventDefault();
+
+        const now = Date.now();
+        if (now - lastTrigger < TRACKPAD_COOLDOWN) return;
+
+        if (now - lastT > 220) accX = 0;
+        lastT = now;
+
+        accX += e.deltaX;
+
+        if (accX > TRACKPAD_TH) {
+          accX = 0;
+          lastTrigger = now;
+          nextDay();
+        } else if (accX < -TRACKPAD_TH) {
+          accX = 0;
+          lastTrigger = now;
+          prevDay();
+        }
+      }, {passive:false});
+    }
+
+    function msToNextMidnight() {
+      const now = new Date();
+      const next = new Date(now);
+      next.setHours(24,0,0,0);
+      return next - now;
+    }
+
+    function scheduleMidnightRefresh() {
+      setTimeout(() => {
+        dayPointer = getTodayPointer();
+        renderScheduleDay();
+        renderCountdownToday();
+        scheduleMidnightRefresh();
+      }, msToNextMidnight());
+    }
+
+    // =========================
+    // GRADES STATS (localStorage)
+    // =========================
+    const G_LS_KEY = "school_stats_v1";
+    function gLoadState(){
+      try{
+        const raw = localStorage.getItem(G_LS_KEY);
+        const data = raw ? JSON.parse(raw) : { subjects: [] };
+        if (!data.subjects) data.subjects = [];
+        return data;
+      }catch{
+        return { subjects: [] };
+      }
+    }
+    function gSaveState(st){
+      localStorage.setItem(G_LS_KEY, JSON.stringify(st));
+      gRender();
+    }
+
+    let gState = gLoadState();
+    let gTab = "avg";
+    let gEditingId = null;
+    let gCreatingNew = false;
+
+    function gUid(){
+      return Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+    }
+    function gParseGrades(text){
+      return String(text).replaceAll(",", " ")
+        .split(/\s+/).map(x=>x.trim()).filter(Boolean)
+        .map(Number).filter(n=>Number.isFinite(n) && n>=1 && n<=5);
+    }
+    function gAvg(arr){
+      if (!arr.length) return 0;
+      return arr.reduce((a,b)=>a+b,0) / arr.length;
+    }
+    function gStatusByAvg(a){
+      if (a >= 4.3) return { t:" Отлично", cls:"gBadgeOk" };
+      if (a >= 3.6) return { t:" Норм", cls:"gBadgeOk" };
+      if (a >= 3.0) return { t:" Надо подтянуть", cls:"gBadgeWarn" };
+      return { t:" Плохо", cls:"gBadgeBad" };
+    }
+
+    function gSetTab(tab){
+      gTab = tab;
+      document.getElementById("gTabAvg").classList.toggle("active", tab==="avg");
+      document.getElementById("gTabAtt").classList.toggle("active", tab==="att");
+      document.getElementById("gRightHeader").textContent = tab==="avg" ? "Средний балл" : "Аттестация";
+      gSyncEditorTab();
+      gRender();
+    }
+
+    function gRender(){
+      gState = gLoadState();
+
+      const listEl = document.getElementById("gList");
+      const emptyHint = document.getElementById("gEmptyHint");
+      const countEl = document.getElementById("gSubjectsCount");
+      const overallBig = document.getElementById("gOverallBig");
+
+      const subjects = gState.subjects.slice().sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+      countEl.textContent = `Предметов: ${subjects.length}`;
+
+      if (!subjects.length){
+        listEl.innerHTML = "";
+        emptyHint.classList.remove("gHidden");
+        overallBig.textContent = "—";
+        return;
+      }
+      emptyHint.classList.add("gHidden");
+
+      if (gTab === "avg"){
+        const avgs = subjects.map(s => gAvg(s.grades || [])).filter(x=>x>0);
+        const overall = avgs.length ? (avgs.reduce((a,b)=>a+b,0)/avgs.length) : 0;
+        overallBig.textContent = overall ? overall.toFixed(2) : "—";
+
+        listEl.innerHTML = subjects.map(s=>{
+          const a = gAvg(s.grades || []);
+          const st = gStatusByAvg(a);
+          const gradesText = (s.grades && s.grades.length) ? s.grades.join(", ") : "—";
+          return `
+            <div class="gSubjectCard">
+              <div class="gSubLeft">
+                <div class="gSubTitleRow">
+                  <div class="gSubName"> ${escapeHtml(s.name)}</div>
+                  <div class="gSubBadge ${st.cls}">${st.t}</div>
+                </div>
+                <div class="gSubLine">Оценки: ${escapeHtml(gradesText)}</div>
+              </div>
+              <div class="gSubRight">${a ? a.toFixed(2) : "—"}</div>
+            </div>
+          `;
+        }).join("");
+      } else {
+        overallBig.textContent = String(subjects.length);
+
+        listEl.innerHTML = subjects.map(s=>{
+          const need = Number(s.needGrades || 0);
+          const got = (s.grades || []).length;
+          const remainingGrades = need ? Math.max(0, need - got) : 0;
+
+          const lessons = Number(s.attLessons || 0);
+          const missed = Number(s.missed || 0);
+          const remainingLessons = lessons ? Math.max(0, lessons - missed) : 0;
+
+          const badgeText = (need || lessons) ? " Аттестация" : " Нет базовых данных";
+          const badgeCls  = (need || lessons) ? "gBadgeOk" : "gBadgeWarn";
+
+          return `
+            <div class="gSubjectCard">
+              <div class="gSubLeft">
+                <div class="gSubTitleRow">
+                  <div class="gSubName"> ${escapeHtml(s.name)}</div>
+                  <div class="gSubBadge ${badgeCls}">${badgeText}</div>
+                </div>
+                <div class="gSubLine">
+                  Нужно оценок: <b>${need || "—"}</b> · Есть: <b>${got}</b> · Осталось: <b>${need ? remainingGrades : "—"}</b>
+                </div>
+                <div class="gSubLine">
+                  Уроков (база): <b>${lessons || "—"}</b> · Пропусков: <b>${missed}</b> · Осталось ходить: <b>${lessons ? remainingLessons : "—"}</b>
+                </div>
+              </div>
+              <div class="gSubRight">${need ? remainingGrades : "—"}</div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+
+    function gOpenEdit(){
+      document.getElementById("gEditOverlay").classList.add("show");
+      gShowPicker();
+      gBuildSubjectsList();
+      gResetEditor();
+      gToggleNewSubject(false);
+    }
+    function gCloseModal(){
+      document.getElementById("gEditOverlay").classList.remove("show");
+      gEditingId = null;
+      gCreatingNew = false;
+    }
+    function gOverlayClose(e){
+      if (e.target && e.target.id === "gEditOverlay") gCloseModal();
+    }
+
+    function gShowPicker(){
+      document.getElementById("gPickerScreen").classList.remove("gHidden");
+      document.getElementById("gEditorScreen").classList.add("gHidden");
+    }
+    function gShowEditor(){
+      document.getElementById("gPickerScreen").classList.add("gHidden");
+      document.getElementById("gEditorScreen").classList.remove("gHidden");
+      gSyncEditorTab();
+    }
+    function gBackToList(){
+      gCreatingNew = false;
+      gEditingId = null;
+      gResetEditor();
+      gShowPicker();
+      gBuildSubjectsList();
+      gToggleNewSubject(false);
+    }
+
+    function gBuildSubjectsList(){
+      const box = document.getElementById("gSubjectsList");
+      const subjects = gLoadState().subjects.slice().sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+      if (!subjects.length){
+        box.innerHTML = `<div class="gSmallNote">Пока нет предметов.</div>`;
+        return;
+      }
+      box.innerHTML = subjects.map(s=>`
+        <button class="gListBtn" onclick="gSelectSubject('${s.id}')"> ${escapeHtml(s.name)}</button>
+      `).join("");
+    }
+
+    function gToggleNewSubject(force){
+      const newField = document.getElementById("gNewField");
+      const newBtn = document.getElementById("gNewBtn");
+      const show = (typeof force === "boolean") ? force : newField.classList.contains("gHidden");
+      newField.classList.toggle("gHidden", !show);
+      newBtn.textContent = show ? "➕ Новый предмет (введите название ниже)" : "➕ Новый предмет";
+      if (show){
+        document.getElementById("gNewName").value = "";
+        document.getElementById("gNewName").focus();
+      }
+    }
+
+    function gSyncEditorTab(){
+      const formAvg = document.getElementById("gFormAvg");
+      const formAtt = document.getElementById("gFormAtt");
+      if (gTab === "avg"){
+        formAvg.classList.remove("gHidden");
+        formAtt.classList.add("gHidden");
+      } else {
+        formAvg.classList.add("gHidden");
+        formAtt.classList.remove("gHidden");
+      }
+    }
+
+    function gResetEditor(){
+      document.getElementById("gEditNameTitle").textContent = "—";
+      document.getElementById("gGradesInput").value = "";
+      document.getElementById("gNeedGrades").value = "";
+      document.getElementById("gAttLessons").value = "";
+      document.getElementById("gMissedInput").value = "";
+      document.getElementById("gNeedGradesWrap").classList.add("gHidden");
+      document.getElementById("gAttLessonsWrap").classList.add("gHidden");
+      gSyncEditorTab();
+    }
+
+    function gSelectSubject(id){
+      const st = gLoadState();
+      const subj = st.subjects.find(s=>s.id===id);
+      if (!subj) return;
+
+      gEditingId = id;
+      gCreatingNew = false;
+
+      gShowEditor(); // скрываем список, оставляем только выбранный предмет
+
+      document.getElementById("gEditNameTitle").textContent = ` ${subj.name}`;
+      document.getElementById("gNeedGradesWrap").classList.add("gHidden");
+      document.getElementById("gAttLessonsWrap").classList.add("gHidden");
+
+      document.getElementById("gGradesInput").value = (subj.grades || []).join(" ");
+      document.getElementById("gMissedInput").value = String(subj.missed || 0);
+
+      gSyncEditorTab();
+    }
+
+    function gCreateNewFromInput(){
+      const name = document.getElementById("gNewName").value.trim();
+      if (!name) { alert("Введите название предмета"); return null; }
+
+      const st = gLoadState();
+      const same = st.subjects.find(s => s.name.toLowerCase() === name.toLowerCase());
+      if (same){
+        gSelectSubject(same.id);
+        return same.id;
+      }
+
+      const id = gUid();
+      st.subjects.push({ id, name, grades: [], needGrades: null, attLessons: null, missed: 0 });
+      localStorage.setItem(G_LS_KEY, JSON.stringify(st));
+      gRender();
+
+      gEditingId = id;
+      gCreatingNew = true;
+
+      gShowEditor(); // скрываем список
+
+      document.getElementById("gEditNameTitle").textContent = ` ${name}`;
+
+      document.getElementById("gNeedGradesWrap").classList.remove("gHidden");
+      document.getElementById("gAttLessonsWrap").classList.remove("gHidden");
+
+      document.getElementById("gGradesInput").value = "";
+      document.getElementById("gNeedGrades").value = "";
+      document.getElementById("gAttLessons").value = "";
+      document.getElementById("gMissedInput").value = "0";
+
+      gSyncEditorTab();
+      return id;
+    }
+
+    function gEnsureEditing(){
+      if (!gEditingId){
+        const newFieldShown = !document.getElementById("gNewField").classList.contains("gHidden");
+        if (newFieldShown) return gCreateNewFromInput();
+        alert("Выбери предмет из списка или нажми «Новый предмет»");
+        return null;
+      }
+      return gEditingId;
+    }
+
+    function gSaveCurrent(){
+      const id = gEnsureEditing();
+      if (!id) return;
+
+      const st = gLoadState();
+      const subj = st.subjects.find(s=>s.id===id);
+      if (!subj) return;
+
+      if (gTab === "avg"){
+        subj.grades = gParseGrades(document.getElementById("gGradesInput").value);
+
+        if (gCreatingNew){
+          const need = Number(document.getElementById("gNeedGrades").value);
+          const lessons = Number(document.getElementById("gAttLessons").value);
+
+          if (Number.isFinite(need) && need > 0) subj.needGrades = need;
+          if (Number.isFinite(lessons) && lessons >= 0) subj.attLessons = lessons;
+
+          gCreatingNew = false;
+          document.getElementById("gNeedGradesWrap").classList.add("gHidden");
+          document.getElementById("gAttLessonsWrap").classList.add("gHidden");
+        }
+      } else {
+        const missed = Number(document.getElementById("gMissedInput").value);
+        subj.missed = (Number.isFinite(missed) && missed >= 0) ? missed : 0;
+      }
+
+      localStorage.setItem(G_LS_KEY, JSON.stringify(st));
+      gRender();
+    }
+
+    function gDeleteCurrent(){
+      const id = gEnsureEditing();
+      if (!id) return;
+
+      if (!confirm("Удалить предмет?")) return;
+
+      const st = gLoadState();
+      st.subjects = st.subjects.filter(s=>s.id !== id);
+      localStorage.setItem(G_LS_KEY, JSON.stringify(st));
+
+      gResetEditor();
+      gShowPicker();
+      gBuildSubjectsList();
+      gToggleNewSubject(false);
+      gRender();
+    }
+
+    document.addEventListener("keydown", (e)=>{
+      if (!document.getElementById("gEditOverlay").classList.contains("show")) return;
+      if (e.key === "Enter" && document.activeElement?.id === "gNewName"){
+        e.preventDefault();
+        gCreateNewFromInput();
+      }
+    });
+
+    // ===== Init =====
+    // Schedule
+    dayPointer = getTodayPointer();
+    renderScheduleDay();
+    renderCountdownToday();
+    scheduleMidnightRefresh();
+    attachSwipe(document.getElementById("scheduleCard"));
+    attachSwipe(document.getElementById("countdownCard"));
+    setInterval(renderCountdownToday, 1000);
+
+    // Grades
+    gRender();
+  </script>
+</body>
+</html>
