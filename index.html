@@ -25,6 +25,7 @@
       --button-active-bg: rgba(42, 171, 238, 0.1);
       --button-border: 1px solid #ddd;
       --button-hover: rgba(0, 0, 0, 0.05);
+      --input-font-size: 14px; /* Размер шрифта для текста в поле */
     }
 
     * {
@@ -138,6 +139,12 @@
     .lessonName {
       font-weight: 900;
       cursor: pointer;
+      display: inline-block;
+      min-width: 100px;
+      max-width: 100%;
+      word-wrap: break-word;
+      white-space: nowrap;
+      text-align: right; /* Текст выравнивается по правому краю */
     }
 
     .lessonName.editing, .lessonTime.editing {
@@ -147,6 +154,10 @@
       width: auto;
       min-width: 100px;
       resize: none;
+      font-size: var(--input-font-size); /* Используем тот же размер шрифта */
+      font-family: var(--font-family); /* Используем тот же шрифт */
+      max-width: 100%; /* Поле будет растягиваться по мере ввода */
+      overflow: hidden;
     }
 
     .lessonTime {
@@ -317,22 +328,22 @@
       if (lessonNameElement.classList.contains('editing')) return;
 
       const currentText = lessonNameElement.textContent;
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = currentText;
+      const input = document.createElement('div');
+      input.contentEditable = true;
+      input.textContent = currentText;
       input.classList.add('editing');
       lessonNameElement.innerHTML = '';
       lessonNameElement.appendChild(input);
       input.focus();
 
       input.addEventListener('blur', function() {
-        const newText = input.value;
+        const newText = input.textContent;
         lessonNameElement.textContent = newText;
       });
 
       input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-          const newText = input.value;
+          const newText = input.textContent;
           lessonNameElement.textContent = newText;
         }
       });
@@ -344,22 +355,22 @@
       if (lessonTimeElement.classList.contains('editing')) return;
 
       const currentTime = lessonTimeElement.textContent;
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = currentTime;
+      const input = document.createElement('div');
+      input.contentEditable = true;
+      input.textContent = currentTime;
       input.classList.add('editing');
       lessonTimeElement.innerHTML = '';
       lessonTimeElement.appendChild(input);
       input.focus();
 
       input.addEventListener('blur', function() {
-        const newTime = input.value;
+        const newTime = input.textContent;
         lessonTimeElement.textContent = newTime;
       });
 
       input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-          const newTime = input.value;
+          const newTime = input.textContent;
           lessonTimeElement.textContent = newTime;
         }
       });
