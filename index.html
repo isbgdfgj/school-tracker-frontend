@@ -21,7 +21,7 @@
       --ok: #16a34a;
       --warn: #f59e0b;
       --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      --button-bg: #f4f6f9;
+      --button-bg: #ffffff; /* Белый фон для кнопок */
       --button-active-bg: rgba(42, 171, 238, 0.1);
       --button-border: 1px solid #ddd;
       --button-hover: rgba(0, 0, 0, 0.05);
@@ -76,7 +76,7 @@
     .dayTitle {
       text-align: center;
       font-size: 24px;
-      margin-top: 16px;
+      margin-top: 8px; /* Подняли текст с названием дня выше */
       font-weight: bold;
     }
 
@@ -84,12 +84,13 @@
       display: flex;
       justify-content: space-between;
       margin-top: 16px;
+      gap: 12px; /* Отступы между кнопками */
     }
 
     .daysOfWeekBtn {
       flex-grow: 1;
       padding: 14px;
-      background-color: var(--button-bg);
+      background-color: var(--button-bg); /* Белый фон для кнопок */
       border: var(--button-border);
       border-radius: 10px;
       font-weight: 700;
@@ -126,7 +127,7 @@
       border: 1px solid var(--border);
       background: #f3f4f6;
       font-size: 14px;
-      margin-bottom: 12px; /* Добавлено расстояние между предметами */
+      margin-bottom: 12px;
     }
 
     .lessonNum {
@@ -143,6 +144,9 @@
       background-color: #f0f0f0;
       border: 1px solid #ccc;
       padding: 2px 5px;
+      width: auto;
+      min-width: 100px;
+      resize: none;
     }
 
     .lessonTime {
@@ -201,11 +205,7 @@
 
     <div class="card swipeZone" id="scheduleCard">
       <div class="dayHeader">
-        <button class="dayBtn active" onclick="prevDay()" aria-label="Предыдущий день"></button>
-
         <div class="dayTitle" id="dayName">—</div>
-
-        <button class="dayBtn active" onclick="nextDay()" aria-label="Следующий день">▶</button>
       </div>
 
       <div id="dayLessons" class="lessonList"></div>
