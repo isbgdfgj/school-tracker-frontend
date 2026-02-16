@@ -120,26 +120,60 @@
 
 
     /* Меню */
+.bottomNav {
+  position: fixed; /* Закрепляем меню внизу */
+  left: 50%; /* Центрируем по горизонтали */
+  transform: translateX(-50%); /* Центрируем по горизонтали */
+  bottom: 20px; /* Отступ снизу */
+  z-index: 10;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); /* добавлены отступы с боков */ 
+  background: #fff;
+  border-top: 1px solid var(--border);
+  border-radius: 50px; /* Скругляем углы у фона */
+  
+  /* Ширина меню будет 90% от ширины экрана, меню фиксированного размера */
+  width: 90vw;
+  
+  display: flex;
+  justify-content: space-between; /* Пустое пространство между элементами */
+  gap: 10px;
+  
+  /* Тень */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Характеристика тени: смещение, размытие, цвет */
+}
+
+/* Обновленный стиль для кнопок меню */
+.navInner {
+  display: flex;
+  justify-content: space-between; /* Равномерное распределение кнопок */
+  width: 100%; /* На всю ширину */
+  gap: 10px;
+  align-items: center; /* Центрируем по вертикали */
+}
+
+/* Кнопки меню */
 .navBtn {
   flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 100px; /* Минимальная ширина кнопок */
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   color: #111;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 4vw; /* Шрифт будет уменьшаться с уменьшением экрана */
+  font-size: 14px;
   text-align: center;
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Изменено на row для расположения в строку */
   align-items: center;
   justify-content: center;
   gap: 6px;
   cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
   width: 100%;
-  overflow: hidden; /* Обрезаем текст, если не вмещается */
-  text-overflow: ellipsis; /* Добавляем многоточие, если текст выходит за пределы */
-  white-space: nowrap; /* Запрещаем перенос текста */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .navBtn.active {
