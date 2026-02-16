@@ -113,9 +113,12 @@
   background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--border);
-  border-radius: 50px 50px ; /* Скругляем углы у фона */
+  border-radius: 50px  ; /* Скругляем углы у фона */
   width: auto; /* Ширина зависит от контента */
   max-width: 520px; /* Максимальная ширина меню */
+  display: flex;
+  justify-content: center; /* Выравнивание кнопок по центру */
+  gap: 10px;
     }
 
 .navInner {
