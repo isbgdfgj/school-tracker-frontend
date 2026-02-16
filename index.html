@@ -121,35 +121,6 @@
 
     /* Меню */
 .bottomNav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); /* добавлены отступы с боков */
-  background: color-mix(in srgb, var(--bg) 85%, transparent);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--border);
-  height: 70px; /* Фиксированная высота для всего меню */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  .bottomNav {
   position: fixed; /* Закрепляем меню внизу */
   left: 50%; /* Центрируем по горизонтали */
   transform: translateX(-50%); /* Центрируем по горизонтали */
@@ -160,42 +131,35 @@
   border-top: 1px solid var(--border);
   border-radius: 50px; /* Скругляем углы у фона */
   
-  /* Уменьшаем меню пропорционально */
-  width: 90vw; /* Ширина меню будет 90% от ширины экрана */
- 
+  /* Ширина меню будет 90% от ширины экрана, меню фиксированного размера */
+  width: 90vw;
   
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Пустое пространство между элементами */
   gap: 10px;
   
   /* Тень */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Характеристика тени: смещение, размытие, цвет */
-    }
+}
 
 /* Обновленный стиль для кнопок меню */
 .navInner {
-  max-width: 520px;
-  margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Равномерное распределение кнопок */
+  width: 100%; /* На всю ширину */
   gap: 10px;
-  width: 100%; /* Устанавливаем на 100% ширину */
+  align-items: center; /* Центрируем по вертикали */
 }
 
-
-
-
-
+/* Кнопки меню */
 .navBtn {
   flex-grow: 1;  /* Растягиваем кнопки по ширине */
-  flex-shrink: 1; /* Уменьшаем кнопки, если места не хватает */
+  flex-shrink: 0; /* Отключаем сжатие кнопок */
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   color: #111;
   border-radius: 50px;  /* Скругленные края */
-  
   font-weight: 700;
-  font-size: 14px;
   font-size: 14px; /* уменьшение размера шрифта */
   white-space: nowrap; /* Убираем перенос текста */
   text-align: center;
@@ -205,21 +169,19 @@
   justify-content: center;
   gap: 6px;
   cursor: pointer;
-  
   transition: background-color 0.3s, box-shadow 0.3s;
   width: 100%; /* Задаем кнопкам одинаковую ширину */
-  
-  flex-grow: 1; /* Кнопки будут одинакового размера */
-  
+  max-width: 120px; /* Ограничиваем максимальную ширину кнопок */
 }
 
+/* Активная кнопка */
 .navBtn.active {
   background-color: #2aabee; /* Цвет для активной вкладки */
   color: white;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-  height: 100%;
 }
 
+/* Иконки */
 .navIcon {
   font-size: 20px;
 }
