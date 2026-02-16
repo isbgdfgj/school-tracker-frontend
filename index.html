@@ -144,16 +144,16 @@
 
 /* Обновленный стиль для кнопок меню */
 .navInner {
+  max-width: 520px;
+  margin: 0 auto;
   display: flex;
-  justify-content: space-between; /* Равномерное распределение кнопок */
-  width: 100%; /* На всю ширину */
+  justify-content: space-between;
   gap: 10px;
-  align-items: center; /* Центрируем по вертикали */
+  width: 100%; /* Убедитесь, что она не имеет фиксированной ширины */
 }
 
-/* Кнопки меню */
 .navBtn {
-  flex-grow: 1;  /* Растягиваем кнопки по ширине */
+  flex-grow: 1; /* Растягиваем кнопки по ширине */
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   color: #111;
@@ -171,8 +171,8 @@
   cursor: pointer;
   
   transition: background-color 0.3s, box-shadow 0.3s;
-  width: auto; /* Убираем фиксированную ширину */
-  padding: 10px 16px;  /* Пропорциональное уменьшение */
+  width: 100%; /* Задаем кнопкам одинаковую ширину */
+  padding: 10px 16px;  /* Убедитесь, что отступы есть */
 }
 
 .navBtn.active {
