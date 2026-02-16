@@ -102,44 +102,60 @@
     .tab.active{display:block}
 
     /* Bottom nav */
+  
     .bottomNav {
-  position: fixed; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%); /* Центрируем меню по горизонтали */
+  bottom: 20px; /* Добавляем отступ снизу от края страницы */
   z-index: 10;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  padding: 10px 12px;
   background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--border);
-  border-radius: 16px;
-  max-width: 270px; /* Ограничиваем ширину меню */
-  margin: 0 auto;  /* Центрируем меню */
+  border-radius: 50px 50px ; /* Скругляем углы у фона */
+  width: auto; /* Ширина зависит от контента */
+  max-width: 520px; /* Максимальная ширина меню */
+    }
+
+.navInner {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between; /* Чтобы кнопки располагались равномерно */
+  gap: 10px;
 }
-    .navInner{
-      max-width:520px;margin:0 auto;
-      display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
-    }
-    .navBtn{
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--card) 92%, transparent);
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 8px;
-      font-weight:900;
-      font-size:12px;
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:4px;
-      line-height:1.1;
-    }
-    .navBtn.active{
-      border-color:color-mix(in srgb, var(--accent) 45%, var(--border));
-      box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
-    }
-    .navIcon{font-size:18px}
+
+.navBtn {
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  color: #111;
+  border-radius: 50px;  /* Скругленные края */
+  padding: 10px 20px;  /* Одинаковое расстояние по оси X и Y */
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  width: 100%; /* Задаем кнопкам одинаковую ширину */
+  max-width: 120px; /* Максимальная ширина */
+  flex-grow: 1; /* Кнопки будут одинакового размера */
+}
+
+.navBtn.active {
+  background-color: #2aabee; /* Цвет для активной вкладки */
+  color: white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.navIcon {
+  font-size: 20px;
+}
 
     /* ===== Welcome (Главная) ===== */
     .wTitle{
