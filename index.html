@@ -110,8 +110,7 @@
   bottom: 20px; /* Добавляем отступ снизу от края страницы */
   z-index: 10;
   padding: 10px 12px;
-  background: color-mix(in srgb, var(--bg) 85%, transparent);
-  backdrop-filter: blur(10px);
+  background: #fff;
   border-top: 1px solid var(--border);
   border-radius: 50px  ; /* Скругляем углы у фона */
   width: auto; /* Ширина зависит от контента */
@@ -119,6 +118,7 @@
   display: flex;
   justify-content: center; /* Выравнивание кнопок по центру */
   gap: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Характеристика тени: смещение, размытие, цвет */
     }
 
 .navInner {
@@ -148,6 +148,7 @@
   width: 100%; /* Задаем кнопкам одинаковую ширину */
   max-width: 120px; /* Максимальная ширина */
   flex-grow: 1; /* Кнопки будут одинакового размера */
+  
 }
 
 .navBtn.active {
