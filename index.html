@@ -118,6 +118,36 @@
 
 
 
+    /* Меню */
+.bottomNav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); /* добавлены отступы с боков */
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  height: 70px; /* Фиксированная высота для всего меню */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   .bottomNav {
   position: fixed; /* Закрепляем меню внизу */
   left: 50%; /* Центрируем по горизонтали */
@@ -141,14 +171,19 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Характеристика тени: смещение, размытие, цвет */
     }
 
+/* Обновленный стиль для кнопок меню */
 .navInner {
   max-width: 520px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between; /* Чтобы кнопки располагались равномерно */
+  justify-content: space-between;
   gap: 10px;
-  width: 100%;
+  width: 100%; /* Устанавливаем на 100% ширину */
 }
+
+
+
+
 
 .navBtn {
   flex-grow: 1;  /* Растягиваем кнопки по ширине */
@@ -169,6 +204,7 @@
   justify-content: center;
   gap: 6px;
   cursor: pointer;
+  height: 100%;
   transition: background-color 0.3s, box-shadow 0.3s;
   width: 100%; /* Задаем кнопкам одинаковую ширину */
   max-width: 120px; /* Максимальная ширина */
