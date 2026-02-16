@@ -7,6 +7,10 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
+
+    body.modal-open {
+  overflow: hidden; /* Запрещает прокрутку страницы */
+}
     :root{
       --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280;
       --border:rgba(17,24,39,.10); --shadow:0 8px 26px rgba(17,24,39,.08);
@@ -18,7 +22,7 @@
       --ok:#16a34a; --bad:#ef4444;
     }
 
-    /*кнопки дней*/
+   /*кнопки дней*/
     .daysOfWeekBtn {
       flex-grow: 1;
       padding: 14px;
@@ -26,15 +30,14 @@
       justify-content: space-between;
       background-color: #fff;
       border: 0.5px solid ;
-      flex-grow: 1;
+      
       border-radius: 10px;
       font-weight: 700;
       font-size: 14px;
-      width: 65px;
+      width: 90px;
       margin: 15px 2px 7px;
       text-transform: uppercase;
-      color: #000;
-      border: 1.5px solid;
+      
     }
 
     .daysOfWeekBtn.active {
@@ -56,7 +59,7 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:70px 0px; background:var(--bg); color:var(--text);
+      margin:0px 0px; background:var(--bg); color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
       overscroll-behavior: none;
@@ -106,13 +109,18 @@
     .tab.active{display:block}
 
     /* Bottom nav */
-    .bottomNav{
-      position:fixed; left:0; right:0; bottom:0; z-index:10;
-      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-      background:color-mix(in srgb, var(--bg) 85%, transparent);
-      backdrop-filter:blur(10px);
-      border-top:1px solid var(--border);
-    }
+    .bottomNav {
+  position: fixed; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  z-index: 10;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--bg) 85%, transparent); /* Это прозрачный фон */
+  backdrop-filter: blur(10px); /* Применяет размытие под контентом */
+  border-top: 1px solid var(--border);
+  border-radius: 160px; /* Скругление углов */
+}
     .navInner{
       max-width:520px;margin:0 auto;
       display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
@@ -754,6 +762,16 @@ function setActiveDayButton(dayIndex) {
       }
       return windows;
     }
+
+    function openModal() {
+  document.body.classList.add('modal-open');
+  // Логика открытия модального окна
+}
+
+function closeModal() {
+  document.body.classList.remove('modal-open');
+  // Логика закрытия модального окна
+}
 
     function renderScheduleDay() {
       const dayNameEl = document.getElementById("dayName");
