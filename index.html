@@ -63,7 +63,8 @@
   padding: 0;
     }
     body{
-      margin:10px 0px; background:var(--bg); color:var(--text);
+      padding: 0 20px;
+      margin:0;;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
       overscroll-behavior: none;
@@ -116,7 +117,7 @@
   position: fixed; /* Закрепляем меню внизу */
   left: 50%; /* Центрируем по горизонтали */
   transform: translateX(-50%); /* Центрируем по горизонтали */
-  bottom: 0px; /* Отступ снизу */
+  bottom: 20px; /* Отступ снизу */
   z-index: 10;
   padding: 10px 12px;
   background: #fff;
@@ -125,10 +126,10 @@
   
   /* Уменьшаем меню пропорционально */
   width: 90vw; /* Ширина меню будет 90% от ширины экрана */
-  max-width: 390px; /* Максимальная ширина меню */
+ 
   max-height: 12vh; /* Максимальная высота */
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
   
   /* Тень */
@@ -141,6 +142,7 @@
   display: flex;
   justify-content: space-between; /* Чтобы кнопки располагались равномерно */
   gap: 10px;
+  width: 100%;
 }
 
 .navBtn {
