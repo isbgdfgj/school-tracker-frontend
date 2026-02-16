@@ -23,28 +23,33 @@
     }
 
    /*кнопки дней*/
-    .daysOfWeekBtn {
-      flex-grow: 1;
-      padding: 14px;
-      
-      justify-content: space-between;
-      background-color: #fff;
-      border: 0.5px solid ;
-      
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14px;
-      width: 90px;
-      margin: 15px 2px 7px;
-      text-transform: uppercase;
-      
-    }
+    .daysOfWeekWrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap; /* Запрещаем перенос кнопок на новую строку */
+  gap: 5px; /* Можно настроить промежутки между кнопками */
+}
 
-    .daysOfWeekBtn.active {
-      background-color: rgba(42, 171, 238, 0.1);
-      border: 2px solid rgba(42, 171, 238, 0.65);
-      box-shadow: 0 0 0 4px rgba(42, 171, 238, 0.18);
-    }
+.daysOfWeekBtn {
+  flex-grow: 1; /* Кнопки будут растягиваться по ширине */
+  padding: 14px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  margin: 15px 2px;
+  text-transform: uppercase;
+  min-width: 70px; /* Минимальная ширина кнопки */
+  color: #000000;
+  border-color: #000000 10;
+}
+
+.daysOfWeekBtn.active {
+  background-color: rgba(42, 171, 238, 0.1);
+  border: 2px solid rgba(42, 171, 238, 0.65);
+  box-shadow: 0 0 0 4px rgba(42, 171, 238, 0.18);
+}
 
     body.tg{
       --bg:var(--tg-theme-bg-color, var(--bg));
