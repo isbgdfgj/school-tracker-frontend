@@ -103,21 +103,38 @@
 
     /* Bottom nav */
   
-    .bottomNav {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%); /* Центрируем меню по горизонтали */
-  bottom: 20px; /* Добавляем отступ снизу от края страницы */
+  
+  
+  
+  
+  
+  /*max-width: 520px; /* Максимальная ширина меню */
+
+
+  
+
+
+  .bottomNav {
+  position: fixed; /* Закрепляем меню внизу */
+  left: 50%; /* Центрируем по горизонтали */
+  transform: translateX(-50%); /* Центрируем по горизонтали */
+  bottom: 20px; /* Отступ снизу */
   z-index: 10;
   padding: 10px 12px;
   background: #fff;
   border-top: 1px solid var(--border);
-  border-radius: 50px  ; /* Скругляем углы у фона */
-  width: auto; /* Ширина зависит от контента */
+  border-radius: 50px; /* Скругляем углы у фона */
+  
+  /* Уменьшаем меню пропорционально */
+  width: 90vw; /* Ширина меню будет 90% от ширины экрана */
   max-width: 520px; /* Максимальная ширина меню */
+  height: auto;/* Ширина зависит от контента */
+  max-height: 12vh; /* Максимальная высота */
   display: flex;
-  justify-content: center; /* Выравнивание кнопок по центру */
+  justify-content: center;
   gap: 10px;
+  
+  /* Тень */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Характеристика тени: смещение, размытие, цвет */
     }
 
