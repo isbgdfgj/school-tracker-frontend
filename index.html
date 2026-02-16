@@ -57,7 +57,11 @@
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html, body {
+  height: 100%; /* Устанавливает высоту на 100% от высоты экрана */
+  margin: 0;
+  padding: 0;
+    }
     body{
       margin:10px 0px; background:var(--bg); color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
@@ -66,9 +70,10 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    .wrap{
-      max-width:520px; margin:0 auto;
-      padding:14px 14px calc(var(--navH) + 18px + env(safe-area-inset-bottom));
+    .wrap {
+  min-height: 100vh; /* Устанавливает минимальную высоту контейнера равной высоте экрана */
+  display: flex;
+  flex-direction: column;
     }
 
     .topbar{
