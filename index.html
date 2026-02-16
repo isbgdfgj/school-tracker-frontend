@@ -120,47 +120,41 @@
 
 
     /* Меню */
+/* Основной контейнер меню */
 .bottomNav {
-  position: fixed; /* Закрепляем меню внизу */
-  left: 50%; /* Центрируем по горизонтали */
-  transform: translateX(-50%); /* Центрируем по горизонтали */
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 20px; /* Отступ снизу */
+  width: 90vw; /* Ширина меню 90% от ширины экрана */
   z-index: 10;
-  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); /* добавлены отступы с боков */ 
+  padding: 10px 16px; /* Отступы по бокам */
   background: #fff;
-  border-top: 1px solid var(--border);
-  border-radius: 50px; /* Скругляем углы у фона */
-  
-  /* Ширина меню будет 90% от ширины экрана, меню фиксированного размера */
-  width: 90vw; 
-  
+  border-radius: 50px; /* Скругленные углы */
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  
-  /* Тень */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Характеристика тени: смещение, размытие, цвет */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Тень */
 }
 
-/* Обновленный стиль для кнопок меню */
+/* Контейнер для кнопок */
 .navInner {
-  width: 100%; /* Устанавливаем на 100% ширину */
   display: flex;
+  width: 100%; /* Растягиваем на всю ширину */
   justify-content: space-between;
   gap: 10px;
 }
 
-/* Кнопки меню */
+/* Кнопки в меню */
 .navBtn {
-  flex-grow: 1;  /* Растягиваем кнопки по ширине */
-  flex-shrink: 0; /* Отключаем сжатие кнопок */
+  flex-grow: 1;
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   color: #111;
-  border-radius: 50px;  /* Скругленные края */
+  border-radius: 50px; /* Скругленные края */
   font-weight: 700;
-  font-size: 14px; /* уменьшение размера шрифта */
-  white-space: nowrap; /* Убираем перенос текста */
+  font-size: 14px;
+  white-space: nowrap;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -169,17 +163,16 @@
   gap: 6px;
   cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
-  width: 33%; /* Задаем кнопкам одинаковую ширину (по 1/3 на каждый блок) */
+  width: 100%; /* Задаем кнопкам одинаковую ширину */
 }
 
-/* Активная кнопка */
+/* Кнопка, которая активна */
 .navBtn.active {
-  background-color: #2aabee; /* Цвет для активной вкладки */
+  background-color: #2aabee;
   color: white;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Иконки */
 .navIcon {
   font-size: 20px;
 }
