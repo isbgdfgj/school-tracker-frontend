@@ -120,41 +120,14 @@
 
 
     /* Меню */
-/* Основной контейнер меню */
-.bottomNav {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 20px; /* Отступ снизу */
-  width: 90vw; /* Ширина меню 90% от ширины экрана */
-  z-index: 10;
-  padding: 10px 16px; /* Отступы по бокам */
-  background: #fff;
-  border-radius: 50px; /* Скругленные углы */
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Тень */
-}
-
-/* Контейнер для кнопок */
-.navInner {
-  display: flex;
-  width: 100%; /* Растягиваем на всю ширину */
-  justify-content: space-between;
-  gap: 10px;
-}
-
-/* Кнопки в меню */
 .navBtn {
   flex-grow: 1;
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   color: #111;
-  border-radius: 50px; /* Скругленные края */
+  border-radius: 50px;
   font-weight: 700;
-  font-size: 14px;
-  white-space: nowrap;
+  font-size: 4vw; /* Шрифт будет уменьшаться с уменьшением экрана */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -163,10 +136,12 @@
   gap: 6px;
   cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
-  width: 100%; /* Задаем кнопкам одинаковую ширину */
+  width: 100%;
+  overflow: hidden; /* Обрезаем текст, если не вмещается */
+  text-overflow: ellipsis; /* Добавляем многоточие, если текст выходит за пределы */
+  white-space: nowrap; /* Запрещаем перенос текста */
 }
 
-/* Кнопка, которая активна */
 .navBtn.active {
   background-color: #2aabee;
   color: white;
