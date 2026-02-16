@@ -116,10 +116,12 @@
   bottom: 0; 
   z-index: 10;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: color-mix(in srgb, var(--bg) 85%, transparent); /* Это прозрачный фон */
-  backdrop-filter: blur(10px); /* Применяет размытие под контентом */
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(10px);
   border-top: 1px solid var(--border);
-  border-radius: 160px; /* Скругление углов */
+  border-radius: 16px;
+  max-width: 455px; /* Ограничиваем ширину меню */
+  margin: 0 auto;  /* Центрируем меню */
 }
     .navInner{
       max-width:520px;margin:0 auto;
